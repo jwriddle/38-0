@@ -20,6 +20,8 @@
     --stripe: rgba(255,255,255,0.03);
   }
 
+  *, *::before, *::after { box-sizing: border-box; }
+
   body {
     background: var(--pitch);
     color: var(--white);
@@ -28,7 +30,6 @@
     overflow-x: hidden;
   }
 
-  /* Pitch lines background */
   body::before {
     content: '';
     position: fixed;
@@ -48,11 +49,7 @@
     z-index: 1;
   }
 
-  /* HEADER */
-  header {
-    text-align: center;
-    margin-bottom: 48px;
-  }
+  header { text-align: center; margin-bottom: 48px; }
 
   .title {
     font-family: 'Bebas Neue', sans-serif;
@@ -78,7 +75,6 @@
     color: var(--cream);
     opacity: 0.7;
     margin-top: 6px;
-    letter-spacing: 0.5px;
   }
 
   .rules-strip {
@@ -92,10 +88,9 @@
     letter-spacing: 1px;
     text-transform: uppercase;
   }
-
   .rules-strip span::before { content: '◆ '; color: var(--lime); }
 
-  /* FORMATION DISPLAY */
+  /* PITCH */
   .pitch-view {
     position: relative;
     background: var(--grass);
@@ -105,18 +100,14 @@
     border: 1px solid rgba(255,255,255,0.08);
     overflow: hidden;
   }
-
   .pitch-view::before {
     content: '';
     position: absolute;
     inset: 0;
-    background:
-      radial-gradient(ellipse 70% 45% at 50% 50%, rgba(255,255,255,0.04) 0%, transparent 70%),
+    background: radial-gradient(ellipse 70% 45% at 50% 50%, rgba(255,255,255,0.04) 0%, transparent 70%),
       linear-gradient(180deg, rgba(0,0,0,0.15) 0%, transparent 20%, transparent 80%, rgba(0,0,0,0.15) 100%);
     pointer-events: none;
   }
-
-  /* Center circle */
   .pitch-view::after {
     content: '';
     position: absolute;
@@ -128,21 +119,9 @@
     pointer-events: none;
   }
 
-  .formation {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    position: relative;
-  }
+  .formation { display: flex; flex-direction: column; gap: 16px; position: relative; }
+  .formation-row { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
 
-  .formation-row {
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-
-  /* PLAYER SLOT */
   .player-slot {
     width: 100px;
     min-height: 90px;
@@ -156,55 +135,26 @@
     justify-content: center;
     padding: 8px 6px;
     transition: all 0.3s ease;
-    cursor: default;
-    position: relative;
   }
-
   .player-slot.filled {
     border-color: var(--lime);
     background: rgba(184,247,46,0.08);
     box-shadow: 0 0 20px rgba(184,247,46,0.15);
   }
-
   .player-slot.active-slot {
     border-color: var(--gold);
     background: rgba(240,192,64,0.12);
     box-shadow: 0 0 24px rgba(240,192,64,0.3);
     animation: pulse-slot 1.5s ease-in-out infinite;
   }
-
   @keyframes pulse-slot {
     0%, 100% { box-shadow: 0 0 24px rgba(240,192,64,0.3); }
     50% { box-shadow: 0 0 36px rgba(240,192,64,0.5); }
   }
-
-  .slot-pos {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 11px;
-    letter-spacing: 2px;
-    opacity: 0.5;
-    margin-bottom: 4px;
-  }
-
-  .slot-name {
-    font-family: 'DM Serif Display', serif;
-    font-size: 13px;
-    text-align: center;
-    line-height: 1.2;
-    color: var(--white);
-  }
-
-  .slot-meta {
-    font-size: 9px;
-    opacity: 0.55;
-    margin-top: 3px;
-    text-align: center;
-  }
-
-  .slot-empty-icon {
-    font-size: 22px;
-    opacity: 0.2;
-  }
+  .slot-pos { font-family: 'Bebas Neue', sans-serif; font-size: 11px; letter-spacing: 2px; opacity: 0.5; margin-bottom: 4px; }
+  .slot-name { font-family: 'DM Serif Display', serif; font-size: 13px; text-align: center; line-height: 1.2; }
+  .slot-meta { font-size: 9px; opacity: 0.55; margin-top: 3px; text-align: center; }
+  .slot-empty-icon { font-size: 22px; opacity: 0.2; }
 
   /* SLOT MACHINE */
   .machine-section {
@@ -214,331 +164,139 @@
     padding: 28px 24px;
     margin-bottom: 24px;
   }
+  .machine-label { font-family: 'Bebas Neue', sans-serif; font-size: 13px; letter-spacing: 3px; opacity: 0.5; margin-bottom: 16px; }
 
-  .machine-label {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 13px;
-    letter-spacing: 3px;
-    opacity: 0.5;
-    margin-bottom: 16px;
-  }
-
-  .reels {
-    display: flex;
-    gap: 12px;
-    margin-bottom: 20px;
-    justify-content: center;
-  }
-
+  .reels { display: flex; gap: 12px; margin-bottom: 20px; justify-content: center; }
   .reel {
-    flex: 1;
-    max-width: 200px;
-    height: 64px;
+    flex: 1; max-width: 200px; height: 64px;
     background: var(--ink);
     border-radius: 4px;
     border: 1px solid rgba(255,255,255,0.08);
     overflow: hidden;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
   }
-
-  .reel-inner {
-    text-align: center;
-    padding: 0 10px;
-    transition: transform 0.1s;
-  }
-
-  .reel-inner.spinning {
-    animation: spin-reel 0.08s linear infinite;
-  }
-
+  .reel-inner { text-align: center; padding: 0 10px; }
+  .reel-inner.spinning { animation: spin-reel 0.08s linear infinite; }
   @keyframes spin-reel {
     0% { transform: translateY(-4px); opacity: 0.7; }
     50% { transform: translateY(4px); opacity: 1; }
     100% { transform: translateY(-4px); opacity: 0.7; }
   }
+  .reel-value { font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: var(--lime); letter-spacing: 1px; }
+  .reel-label { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; opacity: 0.45; margin-top: 2px; }
 
-  .reel-value {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 20px;
-    color: var(--lime);
-    letter-spacing: 1px;
-  }
-
-  .reel-label {
-    font-size: 9px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    opacity: 0.45;
-    margin-top: 2px;
-  }
-
-  /* SPIN BUTTON */
   .btn-spin {
-    display: block;
-    width: 100%;
-    padding: 16px;
-    background: var(--lime);
-    color: var(--ink);
-    border: none;
-    border-radius: 4px;
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 22px;
-    letter-spacing: 3px;
-    cursor: pointer;
-    transition: all 0.15s;
+    display: block; width: 100%; padding: 16px;
+    background: var(--lime); color: var(--ink);
+    border: none; border-radius: 4px;
+    font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 3px;
+    cursor: pointer; transition: all 0.15s;
   }
-
-  .btn-spin:hover:not(:disabled) {
-    background: #ceff3a;
-    transform: translateY(-1px);
-    box-shadow: 0 6px 24px rgba(184,247,46,0.4);
-  }
-
-  .btn-spin:active:not(:disabled) { transform: translateY(0); }
+  .btn-spin:hover:not(:disabled) { background: #ceff3a; transform: translateY(-1px); box-shadow: 0 6px 24px rgba(184,247,46,0.4); }
   .btn-spin:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
 
-  /* SKIP TOKENS */
-  .skip-bar {
-    display: flex;
-    gap: 12px;
-    margin-bottom: 24px;
-    flex-wrap: wrap;
+  /* Loading state */
+  .loading-bar {
+    display: none;
+    height: 3px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 2px;
+    margin-top: 12px;
+    overflow: hidden;
+  }
+  .loading-bar.show { display: block; }
+  .loading-bar::after {
+    content: '';
+    display: block;
+    height: 100%;
+    width: 40%;
+    background: var(--lime);
+    border-radius: 2px;
+    animation: loading-slide 1s ease-in-out infinite;
+  }
+  @keyframes loading-slide {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(350%); }
   }
 
+  .skip-bar { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
   .skip-btn {
-    flex: 1;
-    min-width: 120px;
-    padding: 10px 14px;
-    background: transparent;
-    border: 1.5px solid rgba(255,255,255,0.2);
-    border-radius: 4px;
-    color: var(--white);
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 1px;
-    cursor: pointer;
-    transition: all 0.2s;
+    flex: 1; min-width: 120px; padding: 10px 14px;
+    background: transparent; border: 1.5px solid rgba(255,255,255,0.2);
+    border-radius: 4px; color: var(--white);
+    font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+    letter-spacing: 1px; cursor: pointer; transition: all 0.2s;
     text-transform: uppercase;
   }
-
-  .skip-btn:hover:not(:disabled) {
-    border-color: var(--gold);
-    color: var(--gold);
-    background: rgba(240,192,64,0.08);
-  }
-
+  .skip-btn:hover:not(:disabled) { border-color: var(--gold); color: var(--gold); background: rgba(240,192,64,0.08); }
   .skip-btn:disabled { opacity: 0.2; cursor: not-allowed; }
 
-  /* PLAYER PICK LIST */
-  .pick-section {
-    margin-bottom: 24px;
-  }
+  /* PICK LIST */
+  .pick-section { margin-bottom: 24px; }
+  .pick-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .pick-title { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 2px; }
+  .pick-pos-label { font-size: 11px; background: var(--lime); color: var(--ink); padding: 3px 8px; border-radius: 3px; font-weight: 600; letter-spacing: 1px; }
 
-  .pick-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 12px;
-  }
-
-  .pick-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 20px;
-    letter-spacing: 2px;
-  }
-
-  .pick-pos-label {
-    font-size: 11px;
-    background: var(--lime);
-    color: var(--ink);
-    padding: 3px 8px;
-    border-radius: 3px;
-    font-weight: 600;
-    letter-spacing: 1px;
-  }
-
-  .player-list {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-
+  .player-list { display: flex; flex-direction: column; gap: 6px; }
   .player-card {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    background: rgba(0,0,0,0.3);
-    border: 1px solid rgba(255,255,255,0.07);
-    border-radius: 4px;
-    padding: 12px 16px;
-    cursor: pointer;
-    transition: all 0.2s;
+    display: flex; align-items: center; gap: 14px;
+    background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 4px; padding: 12px 16px;
+    cursor: pointer; transition: all 0.2s;
   }
-
-  .player-card:hover {
-    border-color: var(--lime);
-    background: rgba(184,247,46,0.07);
-    transform: translateX(4px);
-  }
-
-  .player-num {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 28px;
-    color: var(--lime);
-    opacity: 0.6;
-    width: 36px;
-    text-align: center;
-  }
-
+  .player-card:hover { border-color: var(--lime); background: rgba(184,247,46,0.07); transform: translateX(4px); }
+  .player-num { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: var(--lime); opacity: 0.6; width: 36px; text-align: center; }
   .player-info { flex: 1; }
+  .player-name { font-family: 'DM Serif Display', serif; font-size: 16px; }
+  .player-detail { font-size: 10px; opacity: 0.5; margin-top: 2px; letter-spacing: 0.5px; }
+  .player-context { font-size: 10px; opacity: 0.65; margin-top: 4px; line-height: 1.4; font-style: italic; color: var(--cream); }
+  .player-stats { display: flex; gap: 12px; flex-shrink: 0; }
+  .stat-pill { text-align: center; }
+  .stat-val { font-family: 'Bebas Neue', sans-serif; font-size: 18px; color: var(--cream); }
+  .stat-lbl { font-size: 8px; opacity: 0.45; letter-spacing: 1px; text-transform: uppercase; }
 
-  .player-name {
-    font-family: 'DM Serif Display', serif;
-    font-size: 16px;
+  /* STATUS */
+  .status-bar {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 16px; font-size: 11px; opacity: 0.6;
+    letter-spacing: 1px; text-transform: uppercase;
   }
+  .round-dots { display: flex; gap: 6px; }
+  .round-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.2); }
+  .round-dot.done { background: var(--lime); }
+  .round-dot.active { background: var(--gold); }
 
-  .player-detail {
-    font-size: 10px;
-    opacity: 0.5;
-    margin-top: 2px;
-    letter-spacing: 0.5px;
-  }
-
-  .player-stats {
-    display: flex;
-    gap: 12px;
-  }
-
-  .stat-pill {
-    text-align: center;
-  }
-
-  .stat-val {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 18px;
-    color: var(--cream);
-  }
-
-  .stat-lbl {
-    font-size: 8px;
-    opacity: 0.45;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-  }
-
-  /* RESULT SCREEN */
-  .result-screen {
-    display: none;
-    text-align: center;
-    padding: 40px 20px;
-  }
-
+  /* RESULT */
+  .result-screen { display: none; text-align: center; padding: 40px 20px; }
   .result-screen.show { display: block; }
-
   .result-record {
     font-family: 'Bebas Neue', sans-serif;
     font-size: clamp(64px, 14vw, 120px);
-    line-height: 1;
-    letter-spacing: -2px;
+    line-height: 1; letter-spacing: -2px;
     color: var(--lime);
     text-shadow: 0 0 40px rgba(184,247,46,0.4);
     margin-bottom: 8px;
   }
-
   .result-record.bad { color: var(--red); text-shadow: 0 0 40px rgba(232,48,48,0.4); }
-
-  .result-verdict {
-    font-family: 'DM Serif Display', serif;
-    font-style: italic;
-    font-size: 22px;
-    opacity: 0.8;
-    margin-bottom: 32px;
-  }
-
+  .result-verdict { font-family: 'DM Serif Display', serif; font-style: italic; font-size: 22px; opacity: 0.8; margin-bottom: 32px; }
   .result-breakdown {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 10px;
-    max-width: 600px;
-    margin: 0 auto 32px;
-    text-align: left;
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 10px; max-width: 600px; margin: 0 auto 32px; text-align: left;
   }
-
-  .breakdown-card {
-    background: rgba(0,0,0,0.35);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 4px;
-    padding: 12px;
-  }
-
-  .breakdown-pos {
-    font-size: 9px;
-    opacity: 0.4;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-bottom: 4px;
-  }
-
-  .breakdown-name {
-    font-family: 'DM Serif Display', serif;
-    font-size: 14px;
-  }
-
-  .breakdown-rating {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 22px;
-    color: var(--lime);
-    margin-top: 2px;
-  }
+  .breakdown-card { background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.08); border-radius: 4px; padding: 12px; }
+  .breakdown-pos { font-size: 9px; opacity: 0.4; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px; }
+  .breakdown-name { font-family: 'DM Serif Display', serif; font-size: 14px; }
+  .breakdown-rating { font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: var(--lime); margin-top: 2px; }
 
   .btn-restart {
-    padding: 14px 40px;
-    background: transparent;
-    border: 2px solid var(--lime);
-    color: var(--lime);
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 20px;
-    letter-spacing: 3px;
-    cursor: pointer;
-    border-radius: 4px;
-    transition: all 0.2s;
+    padding: 14px 40px; background: transparent;
+    border: 2px solid var(--lime); color: var(--lime);
+    font-family: 'Bebas Neue', sans-serif; font-size: 20px;
+    letter-spacing: 3px; cursor: pointer; border-radius: 4px; transition: all 0.2s;
   }
+  .btn-restart:hover { background: var(--lime); color: var(--ink); }
 
-  .btn-restart:hover {
-    background: var(--lime);
-    color: var(--ink);
-  }
-
-  /* STATUS BAR */
-  .status-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
-    font-size: 11px;
-    opacity: 0.6;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-  }
-
-  .round-dots {
-    display: flex;
-    gap: 6px;
-  }
-
-  .round-dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.2);
-  }
-
-  .round-dot.done { background: var(--lime); }
-  .round-dot.active { background: var(--gold); }
-
-  /* Hiding utils */
+  .error-msg { color: var(--red); font-size: 12px; margin-top: 10px; text-align: center; display: none; }
   .hidden { display: none !important; }
 </style>
 </head>
@@ -548,67 +306,37 @@
     <div class="title">38-0</div>
     <div class="subtitle">Build the perfect XI. Go unbeaten. Become immortal.</div>
     <div class="rules-strip">
-      <span>5 rounds · 1 player per slot</span>
+      <span>5 rounds · PL clubs only</span>
+      <span>2005–2025 eras</span>
       <span>1 club skip · 1 era skip</span>
-      <span>Era-adjusted simulation</span>
     </div>
   </header>
 
-  <!-- PITCH FORMATION VIEW -->
   <div class="pitch-view">
     <div class="formation" id="formation">
-      <!-- GK -->
       <div class="formation-row">
-        <div class="player-slot" id="slot-GK" data-pos="GK">
-          <div class="slot-pos">GK</div>
-          <div class="slot-empty-icon">⬡</div>
-        </div>
+        <div class="player-slot" id="slot-GK" data-pos="GK"><div class="slot-pos">GK</div><div class="slot-empty-icon">⬡</div></div>
       </div>
-      <!-- DEF -->
       <div class="formation-row">
-        <div class="player-slot" id="slot-RB" data-pos="RB">
-          <div class="slot-pos">RB</div><div class="slot-empty-icon">⬡</div>
-        </div>
-        <div class="player-slot" id="slot-CB1" data-pos="CB">
-          <div class="slot-pos">CB</div><div class="slot-empty-icon">⬡</div>
-        </div>
-        <div class="player-slot" id="slot-CB2" data-pos="CB">
-          <div class="slot-pos">CB</div><div class="slot-empty-icon">⬡</div>
-        </div>
-        <div class="player-slot" id="slot-LB" data-pos="LB">
-          <div class="slot-pos">LB</div><div class="slot-empty-icon">⬡</div>
-        </div>
+        <div class="player-slot" id="slot-RB" data-pos="RB"><div class="slot-pos">RB</div><div class="slot-empty-icon">⬡</div></div>
+        <div class="player-slot" id="slot-CB1" data-pos="CB"><div class="slot-pos">CB</div><div class="slot-empty-icon">⬡</div></div>
+        <div class="player-slot" id="slot-CB2" data-pos="CB"><div class="slot-pos">CB</div><div class="slot-empty-icon">⬡</div></div>
+        <div class="player-slot" id="slot-LB" data-pos="LB"><div class="slot-pos">LB</div><div class="slot-empty-icon">⬡</div></div>
       </div>
-      <!-- MID -->
       <div class="formation-row">
-        <div class="player-slot" id="slot-CM1" data-pos="CM">
-          <div class="slot-pos">CM</div><div class="slot-empty-icon">⬡</div>
-        </div>
-        <div class="player-slot" id="slot-CM2" data-pos="CM">
-          <div class="slot-pos">CM</div><div class="slot-empty-icon">⬡</div>
-        </div>
-        <div class="player-slot" id="slot-CM3" data-pos="CM">
-          <div class="slot-pos">CM</div><div class="slot-empty-icon">⬡</div>
-        </div>
+        <div class="player-slot" id="slot-CM1" data-pos="CM"><div class="slot-pos">CM</div><div class="slot-empty-icon">⬡</div></div>
+        <div class="player-slot" id="slot-CM2" data-pos="CM"><div class="slot-pos">CM</div><div class="slot-empty-icon">⬡</div></div>
+        <div class="player-slot" id="slot-CM3" data-pos="CM"><div class="slot-pos">CM</div><div class="slot-empty-icon">⬡</div></div>
       </div>
-      <!-- ATT -->
       <div class="formation-row">
-        <div class="player-slot" id="slot-LW" data-pos="LW">
-          <div class="slot-pos">LW</div><div class="slot-empty-icon">⬡</div>
-        </div>
-        <div class="player-slot" id="slot-ST" data-pos="ST">
-          <div class="slot-pos">ST</div><div class="slot-empty-icon">⬡</div>
-        </div>
-        <div class="player-slot" id="slot-RW" data-pos="RW">
-          <div class="slot-pos">RW</div><div class="slot-empty-icon">⬡</div>
-        </div>
+        <div class="player-slot" id="slot-LW" data-pos="LW"><div class="slot-pos">LW</div><div class="slot-empty-icon">⬡</div></div>
+        <div class="player-slot" id="slot-ST" data-pos="ST"><div class="slot-pos">ST</div><div class="slot-empty-icon">⬡</div></div>
+        <div class="player-slot" id="slot-RW" data-pos="RW"><div class="slot-pos">RW</div><div class="slot-empty-icon">⬡</div></div>
       </div>
     </div>
   </div>
 
-  <!-- MAIN GAME SECTION -->
   <div id="game-section">
-    <!-- Status -->
     <div class="status-bar">
       <span id="round-label">Round 1 of 5</span>
       <div class="round-dots">
@@ -620,43 +348,23 @@
       </div>
     </div>
 
-    <!-- Slot Machine -->
     <div class="machine-section">
       <div class="machine-label">▶ Spin to get your draw</div>
       <div class="reels">
-        <div class="reel">
-          <div class="reel-inner" id="reel-club">
-            <div class="reel-value" id="reel-club-val">?????</div>
-            <div class="reel-label">Club</div>
-          </div>
-        </div>
-        <div class="reel">
-          <div class="reel-inner" id="reel-era">
-            <div class="reel-value" id="reel-era-val">????s</div>
-            <div class="reel-label">Era</div>
-          </div>
-        </div>
-        <div class="reel">
-          <div class="reel-inner" id="reel-pos">
-            <div class="reel-value" id="reel-pos-val">??</div>
-            <div class="reel-label">Position</div>
-          </div>
-        </div>
+        <div class="reel"><div class="reel-inner" id="reel-club"><div class="reel-value" id="reel-club-val">?????</div><div class="reel-label">Club</div></div></div>
+        <div class="reel"><div class="reel-inner" id="reel-era"><div class="reel-value" id="reel-era-val">????s</div><div class="reel-label">Era</div></div></div>
+        <div class="reel"><div class="reel-inner" id="reel-pos"><div class="reel-value" id="reel-pos-val">??</div><div class="reel-label">Position</div></div></div>
       </div>
       <button class="btn-spin" id="btn-spin" onclick="doSpin()">SPIN</button>
+      <div class="loading-bar" id="loading-bar"></div>
+      <div class="error-msg" id="error-msg">Failed to load players. Try again.</div>
     </div>
 
-    <!-- Skip buttons -->
     <div class="skip-bar">
-      <button class="skip-btn" id="skip-club-btn" onclick="skipClub()" disabled>
-        ✦ Skip Club <span id="club-skip-count">(1 left)</span>
-      </button>
-      <button class="skip-btn" id="skip-era-btn" onclick="skipEra()" disabled>
-        ✦ Skip Era <span id="era-skip-count">(1 left)</span>
-      </button>
+      <button class="skip-btn" id="skip-club-btn" onclick="skipClub()" disabled>✦ Skip Club <span id="club-skip-count">(1 left)</span></button>
+      <button class="skip-btn" id="skip-era-btn" onclick="skipEra()" disabled>✦ Skip Era <span id="era-skip-count">(1 left)</span></button>
     </div>
 
-    <!-- Player picks -->
     <div class="pick-section hidden" id="pick-section">
       <div class="pick-header">
         <div class="pick-title" id="pick-title">Choose your player</div>
@@ -666,85 +374,411 @@
     </div>
   </div>
 
-  <!-- RESULT SCREEN -->
   <div class="result-screen" id="result-screen">
     <div class="result-record" id="result-record">38-0-0</div>
-    <div class="result-verdict" id="result-verdict">An era-defining side.</div>
+    <div class="result-verdict" id="result-verdict"></div>
     <div class="result-breakdown" id="result-breakdown"></div>
     <button class="btn-restart" onclick="restartGame()">PLAY AGAIN</button>
   </div>
 </div>
 
 <script>
-// ─── DATA ───────────────────────────────────────────────────────────────────
+// ─── CONSTANTS ───────────────────────────────────────────────────────────────
 
-const CLUBS = [
-  'Real Madrid','Barcelona','Manchester Utd','Chelsea','Arsenal',
-  'Liverpool','Bayern Munich','Juventus','AC Milan','Inter Milan',
-  'Boca Juniors','Ajax','PSG','Atletico Madrid','Benfica',
-  'Borussia Dortmund','Porto','Tottenham','Roma','Napoli'
+const PL_CLUBS = [
+  'Arsenal','Chelsea','Liverpool','Manchester City','Manchester United',
+  'Tottenham Hotspur','Newcastle United','Aston Villa','West Ham United',
+  'Everton','Leicester City','Leeds United','Wolverhampton Wanderers',
+  'Southampton','Crystal Palace','Fulham','Nottingham Forest',
+  'Brentford','Brighton','Blackburn Rovers'
 ];
 
-const ERAS = ['1960s','1970s','1980s','1990s','2000s','2010s','2020s'];
+const ERAS = ['2005-09','2010-14','2015-19','2020-25'];
 
-const POSITIONS_ORDER = ['GK','DEF','MID','ATT','ATT'];
+const ROUND_POSITIONS = ['GK','DEF','MID','ATT','ATT'];
 
-const POS_MAP = {
-  GK:  ['GK'],
-  DEF: ['RB','CB1','CB2','LB'],
-  MID: ['CM1','CM2','CM3'],
-  ATT: ['LW','ST','RW']
+const SLOT_IDS = {
+  GK:  ['slot-GK'],
+  DEF: ['slot-RB','slot-CB1','slot-CB2','slot-LB'],
+  MID: ['slot-CM1','slot-CM2','slot-CM3'],
+  ATT: ['slot-LW','slot-ST','slot-RW'],
 };
 
-// Full player database keyed by [club][era][position]
-// Each player: { name, club, era, pos, goals, assists, rating, caps }
-const PLAYERS = {
-  'Real Madrid': {
-    '1960s': [
-      { name:'Alfredo Di Stéfano', pos:'ST', goals:308, assists:120, rating:96, caps:282 },
-      { name:'Ferenc Puskás',      pos:'ST', goals:242, assists:89,  rating:94, caps:180 },
-      { name:'Gento',              pos:'LW', goals:128, assists:142, rating:89, caps:428 },
-      { name:'José Santamaría',    pos:'CB', goals:12,  assists:18,  rating:88, caps:234 },
-    ],
-    '1980s': [
-      { name:'Emilio Butragueño',  pos:'ST', goals:164, assists:91,  rating:88, caps:341 },
-      { name:'Hugo Sánchez',       pos:'ST', goals:208, assists:60,  rating:90, caps:282 },
-      { name:'Michel',             pos:'CM', goals:133, assists:140, rating:87, caps:282 },
-    ],
-    '1990s': [
-      { name:'Raúl',               pos:'ST', goals:323, assists:103, rating:91, caps:741 },
-      { name:'Predrag Mijatović',  pos:'ST', goals:83,  assists:72,  rating:85, caps:204 },
-      { name:'Roberto Carlos',     pos:'LB', goals:67,  assists:166, rating:93, caps:527 },
-    ],
-    '2000s': [
-      { name:'Ronaldo Nazário',    pos:'ST', goals:177, assists:58,  rating:95, caps:236 },
-      { name:'Zinedine Zidane',    pos:'CM', goals:104, assists:183, rating:97, caps:227 },
-      { name:'Iker Casillas',      pos:'GK', goals:0,   assists:4,   rating:92, caps:725 },
-      { name:'Roberto Carlos',     pos:'LB', goals:67,  assists:166, rating:93, caps:527 },
-      { name:'Sergio Ramos',       pos:'CB', goals:101, assists:38,  rating:91, caps:671 },
-    ],
-    '2010s': [
-      { name:'Cristiano Ronaldo',  pos:'ST', goals:450, assists:131, rating:98, caps:438 },
-      { name:'Karim Benzema',      pos:'ST', goals:354, assists:165, rating:93, caps:648 },
-      { name:'Luka Modrić',        pos:'CM', goals:72,  assists:193, rating:95, caps:514 },
-      { name:'Toni Kroos',         pos:'CM', goals:52,  assists:160, rating:93, caps:463 },
-      { name:'Sergio Ramos',       pos:'CB', goals:101, assists:38,  rating:91, caps:671 },
-      { name:'Marcelo',            pos:'LB', goals:38,  assists:101, rating:89, caps:546 },
-    ],
-    '2020s': [
-      { name:'Vinícius Jr.',       pos:'LW', goals:174, assists:98,  rating:93, caps:348 },
-      { name:'Jude Bellingham',    pos:'CM', goals:78,  assists:69,  rating:92, caps:184 },
-      { name:'Karim Benzema',      pos:'ST', goals:354, assists:165, rating:93, caps:648 },
-    ],
-  },
-  'Barcelona': {
-    '1970s': [
-      { name:'Johan Cruyff',       pos:'ST', goals:192, assists:143, rating:97, caps:256 },
-      { name:'Johan Neeskens',     pos:'CM', goals:55,  assists:102, rating:90, caps:175 },
-    ],
-    '1980s': [
-      { name:'Diego Maradona',     pos:'CM', goals:38,  assists:58,  rating:97, caps:36  },
-      { name:'Gary Lineker',       pos:'ST', goals:52,  assists:28,  rating:87, caps:144 },
-    ],
-    '1990s': [
-      { name:'Ronaldo Nazário',    pos:'ST', g
+// ─── STATE ───────────────────────────────────────────────────────────────────
+
+let state = {
+  round: 0,
+  clubSkipsLeft: 1,
+  eraSkipsLeft: 1,
+  currentClub: null,
+  currentEra: null,
+  currentPos: null,
+  spunThisRound: false,
+  roster: {},
+  filledSlots: {},
+  currentPlayers: [],
+};
+
+// ─── AI PLAYER FETCH ─────────────────────────────────────────────────────────
+
+async function fetchPlayersFromAI(club, era, pos) {
+  const posDesc = {
+    GK: 'goalkeeper (GK)',
+    DEF: 'defenders — could be centre-backs, full-backs, or wing-backs (CB, RB, LB)',
+    MID: 'central midfielders or attacking/defensive midfielders (CM, DM, AM)',
+    ATT: 'forwards or wingers (ST, LW, RW, CF)'
+  };
+
+  const prompt = `You are a football statistics database. Return ONLY a valid JSON array — no markdown, no explanation, nothing else.
+
+List the 3 best real Premier League players who played for ${club} during the ${era} era, at the ${posDesc[pos]} position.
+
+Each player object must have exactly these fields:
+- "name": full name (string)
+- "pos": specific position abbreviation like GK, CB, RB, LB, CM, DM, AM, ST, LW, RW (string)
+- "plGoals": goals scored at ${club} during ${era} (integer, use 0 for defenders/GKs unless they scored notably)
+- "plAssists": assists at ${club} during ${era} (integer)
+- "plApps": appearances for ${club} during ${era} (integer)
+- "rating": overall quality rating 70-99 reflecting their peak at this club in this era (integer)
+- "fact": one short memorable factual sentence about them at this club, max 12 words (string)
+
+Rules:
+- Only include players who genuinely played for ${club} in the Premier League during ${era}
+- If fewer than 3 players fit, return only those who do (minimum 1)
+- Stats should be accurate to the best of your knowledge for their time at ${club} in ${era} specifically
+- Rating should reflect their peak quality: 95+ = all-time elite, 90-94 = top-class, 85-89 = very good, 80-84 = solid PL player
+- Return ONLY the JSON array, nothing else`;
+
+  const response = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      model: "claude-sonnet-4-20250514",
+      max_tokens: 1000,
+      messages: [{ role: "user", content: prompt }]
+    })
+  });
+
+  if (!response.ok) throw new Error(`API error: ${response.status}`);
+  const data = await response.json();
+  const text = data.content.map(b => b.text || '').join('').trim();
+  const clean = text.replace(/```json|```/g, '').trim();
+  const players = JSON.parse(clean);
+  return players.map(p => ({ ...p, club, era }));
+}
+
+// ─── SPIN ANIMATION ──────────────────────────────────────────────────────────
+
+function spinAnimation(reelId, finalValue, delay, cb) {
+  setTimeout(() => {
+    const inner = document.getElementById(reelId);
+    if (!inner) { if (cb) cb(); return; }
+    inner.classList.add('spinning');
+    const valueEl = document.getElementById(reelId + '-val');
+    const noise = ['MAN UTD','BARCA','MILAN','AJAX','JUVE','PSG','PORTO','NAPOLI','ROMA','CHELSEA','ARSENAL','SPURS'];
+    let count = 0;
+    const interval = setInterval(() => {
+      valueEl.textContent = noise[Math.floor(Math.random() * noise.length)].slice(0, 3 + Math.floor(Math.random()*4));
+      count++;
+      if (count >= 16) {
+        clearInterval(interval);
+        inner.classList.remove('spinning');
+        valueEl.textContent = finalValue;
+        if (cb) cb();
+      }
+    }, 60);
+  }, delay);
+}
+
+// ─── UI HELPERS ──────────────────────────────────────────────────────────────
+
+function updateDots() {
+  for (let i = 0; i < 5; i++) {
+    const dot = document.getElementById(`dot-${i}`);
+    dot.className = 'round-dot';
+    if (i < state.round) dot.classList.add('done');
+    else if (i === state.round) dot.classList.add('active');
+  }
+}
+
+function getAvailableSlots(pos) {
+  return SLOT_IDS[pos].filter(id => !state.filledSlots[id]);
+}
+
+function showPickSection(players) {
+  const section = document.getElementById('pick-section');
+  section.classList.remove('hidden');
+  document.getElementById('pick-title').textContent = `${state.currentClub} · ${state.currentEra}`;
+  document.getElementById('pick-pos-label').textContent = state.currentPos;
+
+  const list = document.getElementById('player-list');
+  list.innerHTML = '';
+  players.forEach((p, i) => {
+    const div = document.createElement('div');
+    div.className = 'player-card';
+    div.innerHTML = `
+      <div class="player-num">${i + 1}</div>
+      <div class="player-info">
+        <div class="player-name">${p.name}</div>
+        <div class="player-detail">${p.pos} · ${p.plApps} apps for ${p.club}</div>
+        ${p.fact ? `<div class="player-context">${p.fact}</div>` : ''}
+      </div>
+      <div class="player-stats">
+        <div class="stat-pill"><div class="stat-val">${p.plGoals}</div><div class="stat-lbl">Goals</div></div>
+        <div class="stat-pill"><div class="stat-val">${p.plAssists}</div><div class="stat-lbl">Ast</div></div>
+        <div class="stat-pill"><div class="stat-val">${p.rating}</div><div class="stat-lbl">Rtg</div></div>
+      </div>
+    `;
+    div.onclick = () => pickPlayer(p);
+    list.appendChild(div);
+  });
+}
+
+function fillSlot(slotId, player) {
+  const slot = document.getElementById(slotId);
+  slot.classList.remove('active-slot');
+  slot.classList.add('filled');
+  const pos = slot.dataset.pos;
+  const lastName = player.name.split(' ').pop();
+  slot.innerHTML = `
+    <div class="slot-pos">${pos}</div>
+    <div class="slot-name">${lastName}</div>
+    <div class="slot-meta">${player.era}</div>
+  `;
+}
+
+function highlightNextSlots(pos) {
+  const available = getAvailableSlots(pos);
+  if (available.length > 0) document.getElementById(available[0]).classList.add('active-slot');
+}
+
+function setLoading(on) {
+  document.getElementById('loading-bar').classList.toggle('show', on);
+  document.getElementById('btn-spin').disabled = on;
+  document.getElementById('error-msg').style.display = 'none';
+}
+
+// ─── GAME LOGIC ──────────────────────────────────────────────────────────────
+
+async function doSpin() {
+  if (state.round >= 5) return;
+
+  const pos = ROUND_POSITIONS[state.round];
+  const club = PL_CLUBS[Math.floor(Math.random() * PL_CLUBS.length)];
+  const era = ERAS[Math.floor(Math.random() * ERAS.length)];
+
+  state.currentClub = club;
+  state.currentEra = era;
+  state.currentPos = pos;
+  state.spunThisRound = true;
+
+  document.getElementById('pick-section').classList.add('hidden');
+  document.getElementById('skip-club-btn').disabled = true;
+  document.getElementById('skip-era-btn').disabled = true;
+
+  // Animate reels, then fetch
+  spinAnimation('reel-club', club, 0, () => {
+    spinAnimation('reel-era', era, 300, () => {
+      spinAnimation('reel-pos', pos, 300, async () => {
+        document.getElementById('round-label').textContent = `Round ${state.round + 1} of 5 — Pick your ${pos}`;
+        setLoading(true);
+        try {
+          const players = await fetchPlayersFromAI(club, era, pos);
+          state.currentPlayers = players;
+          setLoading(false);
+          showPickSection(players);
+          highlightNextSlots(pos);
+          document.getElementById('skip-club-btn').disabled = state.clubSkipsLeft === 0;
+          document.getElementById('skip-era-btn').disabled = state.eraSkipsLeft === 0;
+        } catch (e) {
+          setLoading(false);
+          document.getElementById('error-msg').style.display = 'block';
+          document.getElementById('btn-spin').disabled = false;
+          console.error(e);
+        }
+      });
+    });
+  });
+}
+
+async function skipClub() {
+  if (state.clubSkipsLeft === 0 || !state.spunThisRound) return;
+  state.clubSkipsLeft--;
+  document.getElementById('club-skip-count').textContent = '(0 left)';
+  document.getElementById('skip-club-btn').disabled = true;
+
+  const newClub = PL_CLUBS[Math.floor(Math.random() * PL_CLUBS.length)];
+  state.currentClub = newClub;
+
+  spinAnimation('reel-club', newClub, 0, async () => {
+    document.getElementById('pick-section').classList.add('hidden');
+    setLoading(true);
+    try {
+      const players = await fetchPlayersFromAI(newClub, state.currentEra, state.currentPos);
+      state.currentPlayers = players;
+      setLoading(false);
+      showPickSection(players);
+    } catch(e) {
+      setLoading(false);
+      document.getElementById('error-msg').style.display = 'block';
+      console.error(e);
+    }
+  });
+}
+
+async function skipEra() {
+  if (state.eraSkipsLeft === 0 || !state.spunThisRound) return;
+  state.eraSkipsLeft--;
+  document.getElementById('era-skip-count').textContent = '(0 left)';
+  document.getElementById('skip-era-btn').disabled = true;
+
+  const available = ERAS.filter(e => e !== state.currentEra);
+  const newEra = available[Math.floor(Math.random() * available.length)];
+  state.currentEra = newEra;
+
+  spinAnimation('reel-era', newEra, 0, async () => {
+    document.getElementById('pick-section').classList.add('hidden');
+    setLoading(true);
+    try {
+      const players = await fetchPlayersFromAI(state.currentClub, newEra, state.currentPos);
+      state.currentPlayers = players;
+      setLoading(false);
+      showPickSection(players);
+    } catch(e) {
+      setLoading(false);
+      document.getElementById('error-msg').style.display = 'block';
+      console.error(e);
+    }
+  });
+}
+
+function pickPlayer(player) {
+  const pos = state.currentPos;
+  const availableSlots = getAvailableSlots(pos);
+  const slotId = availableSlots[0];
+  if (!slotId) return;
+
+  state.filledSlots[slotId] = true;
+  state.roster[slotId] = player;
+  fillSlot(slotId, player);
+
+  document.querySelectorAll('.active-slot').forEach(el => el.classList.remove('active-slot'));
+  document.getElementById('pick-section').classList.add('hidden');
+  document.getElementById('skip-club-btn').disabled = true;
+  document.getElementById('skip-era-btn').disabled = true;
+
+  state.round++;
+  state.spunThisRound = false;
+
+  if (state.round >= 5) {
+    setTimeout(simulateResult, 500);
+    return;
+  }
+
+  updateDots();
+  document.getElementById('round-label').textContent = `Round ${state.round + 1} of 5`;
+  document.getElementById('btn-spin').disabled = false;
+  document.getElementById('reel-club-val').textContent = '?????';
+  document.getElementById('reel-era-val').textContent = '????s';
+  document.getElementById('reel-pos-val').textContent = '??';
+}
+
+// ─── SIMULATION ──────────────────────────────────────────────────────────────
+
+function simulateResult() {
+  const players = Object.values(state.roster);
+
+  let totalScore = 0;
+  players.forEach(p => {
+    const base = p.rating;
+    const goalBonus = Math.log1p(p.plGoals) * 1.4;
+    const assistBonus = Math.log1p(p.plAssists) * 1.1;
+    const appBonus = Math.log1p(p.plApps) * 0.5;
+    totalScore += base + goalBonus + assistBonus + appBonus;
+  });
+
+  const avg = totalScore / players.length;
+  const wins = Math.min(38, Math.max(6, Math.round((avg - 82) * 3.5)));
+  const draws = Math.min(38 - wins, Math.floor(Math.random() * 5));
+  const losses = 38 - wins - draws;
+
+  const verdicts = [
+    [38, "Invincible. Unplayable. A side for the ages."],
+    [34, "A historic title-winning campaign. Pure dominance."],
+    [28, "Champions. A formidable, battle-hardened side."],
+    [22, "Top four contenders. Some magic, some inconsistency."],
+    [16, "Mid-table respectability. Room for improvement."],
+    [0,  "A tough season. Great players who never quite clicked."],
+  ];
+  const verdict = verdicts.find(([min]) => wins >= min)[1];
+
+  showResult(wins, draws, losses, verdict);
+}
+
+function showResult(w, d, l, verdict) {
+  document.getElementById('game-section').classList.add('hidden');
+  const screen = document.getElementById('result-screen');
+  screen.classList.add('show');
+
+  const rec = document.getElementById('result-record');
+  rec.textContent = `${w}W · ${d}D · ${l}L`;
+  rec.className = 'result-record' + (w < 18 ? ' bad' : '');
+  document.getElementById('result-verdict').textContent = verdict;
+
+  const breakdown = document.getElementById('result-breakdown');
+  breakdown.innerHTML = '';
+  const slots = ['slot-GK','slot-RB','slot-CB1','slot-CB2','slot-LB','slot-CM1','slot-CM2','slot-CM3','slot-LW','slot-ST','slot-RW'];
+  slots.forEach(id => {
+    const p = state.roster[id];
+    if (!p) return;
+    const posLabel = id.replace('slot-','').replace(/\d/g,'');
+    const div = document.createElement('div');
+    div.className = 'breakdown-card';
+    div.innerHTML = `
+      <div class="breakdown-pos">${posLabel}</div>
+      <div class="breakdown-name">${p.name}</div>
+      <div class="breakdown-rating">${p.rating}</div>
+      <div style="font-size:9px;opacity:0.4">${p.club} · ${p.era}</div>
+    `;
+    breakdown.appendChild(div);
+  });
+}
+
+function restartGame() {
+  state = { round:0, clubSkipsLeft:1, eraSkipsLeft:1, currentClub:null, currentEra:null, currentPos:null, spunThisRound:false, roster:{}, filledSlots:{}, currentPlayers:[] };
+
+  document.getElementById('result-screen').classList.remove('show');
+  document.getElementById('game-section').classList.remove('hidden');
+  document.getElementById('pick-section').classList.add('hidden');
+  document.getElementById('btn-spin').disabled = false;
+  document.getElementById('skip-club-btn').disabled = true;
+  document.getElementById('skip-era-btn').disabled = true;
+  document.getElementById('club-skip-count').textContent = '(1 left)';
+  document.getElementById('era-skip-count').textContent = '(1 left)';
+  document.getElementById('reel-club-val').textContent = '?????';
+  document.getElementById('reel-era-val').textContent = '????s';
+  document.getElementById('reel-pos-val').textContent = '??';
+  document.getElementById('round-label').textContent = 'Round 1 of 5';
+  document.getElementById('loading-bar').classList.remove('show');
+  document.getElementById('error-msg').style.display = 'none';
+
+  const slotDefs = [
+    ['slot-GK','GK'],['slot-RB','RB'],['slot-CB1','CB'],['slot-CB2','CB'],
+    ['slot-LB','LB'],['slot-CM1','CM'],['slot-CM2','CM'],['slot-CM3','CM'],
+    ['slot-LW','LW'],['slot-ST','ST'],['slot-RW','RW'],
+  ];
+  slotDefs.forEach(([id, pos]) => {
+    const el = document.getElementById(id);
+    el.className = 'player-slot';
+    el.dataset.pos = pos;
+    el.innerHTML = `<div class="slot-pos">${pos}</div><div class="slot-empty-icon">⬡</div>`;
+  });
+
+  updateDots();
+}
+
+updateDots();
+</script>
+</body>
+</html>
+
