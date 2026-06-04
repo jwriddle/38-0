@@ -1,0 +1,1423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>38-0 — Build the Perfect XI</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --pitch: #1a3a1a;
+    --grass: #2d5a27;
+    --lime: #b8f72e;
+    --white: #f5f0e8;
+    --cream: #ede8dc;
+    --ink: #0f1a0f;
+    --red: #e83030;
+    --gold: #f0c040;
+    --stripe: rgba(255,255,255,0.03);
+  }
+
+  body {
+    background: var(--pitch);
+    color: var(--white);
+    font-family: 'IBM Plex Mono', monospace;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Pitch lines background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      repeating-linear-gradient(90deg, var(--stripe) 0px, var(--stripe) 1px, transparent 1px, transparent 60px),
+      repeating-linear-gradient(180deg, var(--stripe) 0px, var(--stripe) 1px, transparent 1px, transparent 60px);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* HEADER */
+  header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  .title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(80px, 18vw, 160px);
+    line-height: 0.9;
+    letter-spacing: -2px;
+    color: var(--lime);
+    text-shadow: 0 0 60px rgba(184,247,46,0.3), 4px 4px 0 rgba(0,0,0,0.5);
+    animation: flicker 6s ease-in-out infinite;
+  }
+
+  @keyframes flicker {
+    0%, 94%, 100% { opacity: 1; }
+    95% { opacity: 0.85; }
+    96% { opacity: 1; }
+    97% { opacity: 0.9; }
+  }
+
+  .subtitle {
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    font-size: 18px;
+    color: var(--cream);
+    opacity: 0.7;
+    margin-top: 6px;
+    letter-spacing: 0.5px;
+  }
+
+  .rules-strip {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 20px;
+    font-size: 11px;
+    opacity: 0.5;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .rules-strip span::before { content: '◆ '; color: var(--lime); }
+
+  /* FORMATION DISPLAY */
+  .pitch-view {
+    position: relative;
+    background: var(--grass);
+    border-radius: 8px;
+    margin-bottom: 32px;
+    padding: 24px 16px;
+    border: 1px solid rgba(255,255,255,0.08);
+    overflow: hidden;
+  }
+
+  .pitch-view::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 70% 45% at 50% 50%, rgba(255,255,255,0.04) 0%, transparent 70%),
+      linear-gradient(180deg, rgba(0,0,0,0.15) 0%, transparent 20%, transparent 80%, rgba(0,0,0,0.15) 100%);
+    pointer-events: none;
+  }
+
+  /* Center circle */
+  .pitch-view::after {
+    content: '';
+    position: absolute;
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.1);
+    pointer-events: none;
+  }
+
+  .formation {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    position: relative;
+  }
+
+  .formation-row {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  /* PLAYER SLOT */
+  .player-slot {
+    width: 100px;
+    min-height: 90px;
+    border-radius: 6px;
+    border: 1.5px solid rgba(255,255,255,0.15);
+    background: rgba(0,0,0,0.3);
+    backdrop-filter: blur(4px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 6px;
+    transition: all 0.3s ease;
+    cursor: default;
+    position: relative;
+  }
+
+  .player-slot.filled {
+    border-color: var(--lime);
+    background: rgba(184,247,46,0.08);
+    box-shadow: 0 0 20px rgba(184,247,46,0.15);
+  }
+
+  .player-slot.active-slot {
+    border-color: var(--gold);
+    background: rgba(240,192,64,0.12);
+    box-shadow: 0 0 24px rgba(240,192,64,0.3);
+    animation: pulse-slot 1.5s ease-in-out infinite;
+  }
+
+  @keyframes pulse-slot {
+    0%, 100% { box-shadow: 0 0 24px rgba(240,192,64,0.3); }
+    50% { box-shadow: 0 0 36px rgba(240,192,64,0.5); }
+  }
+
+  .slot-pos {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 11px;
+    letter-spacing: 2px;
+    opacity: 0.5;
+    margin-bottom: 4px;
+  }
+
+  .slot-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: 13px;
+    text-align: center;
+    line-height: 1.2;
+    color: var(--white);
+  }
+
+  .slot-meta {
+    font-size: 9px;
+    opacity: 0.55;
+    margin-top: 3px;
+    text-align: center;
+  }
+
+  .slot-empty-icon {
+    font-size: 22px;
+    opacity: 0.2;
+  }
+
+  /* SLOT MACHINE */
+  .machine-section {
+    background: rgba(0,0,0,0.4);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 28px 24px;
+    margin-bottom: 24px;
+  }
+
+  .machine-label {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 13px;
+    letter-spacing: 3px;
+    opacity: 0.5;
+    margin-bottom: 16px;
+  }
+
+  .reels {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+    justify-content: center;
+  }
+
+  .reel {
+    flex: 1;
+    max-width: 200px;
+    height: 64px;
+    background: var(--ink);
+    border-radius: 4px;
+    border: 1px solid rgba(255,255,255,0.08);
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .reel-inner {
+    text-align: center;
+    padding: 0 10px;
+    transition: transform 0.1s;
+  }
+
+  .reel-inner.spinning {
+    animation: spin-reel 0.08s linear infinite;
+  }
+
+  @keyframes spin-reel {
+    0% { transform: translateY(-4px); opacity: 0.7; }
+    50% { transform: translateY(4px); opacity: 1; }
+    100% { transform: translateY(-4px); opacity: 0.7; }
+  }
+
+  .reel-value {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    color: var(--lime);
+    letter-spacing: 1px;
+  }
+
+  .reel-label {
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    opacity: 0.45;
+    margin-top: 2px;
+  }
+
+  /* SPIN BUTTON */
+  .btn-spin {
+    display: block;
+    width: 100%;
+    padding: 16px;
+    background: var(--lime);
+    color: var(--ink);
+    border: none;
+    border-radius: 4px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 3px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .btn-spin:hover:not(:disabled) {
+    background: #ceff3a;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 24px rgba(184,247,46,0.4);
+  }
+
+  .btn-spin:active:not(:disabled) { transform: translateY(0); }
+  .btn-spin:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+
+  /* SKIP TOKENS */
+  .skip-bar {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+
+  .skip-btn {
+    flex: 1;
+    min-width: 120px;
+    padding: 10px 14px;
+    background: transparent;
+    border: 1.5px solid rgba(255,255,255,0.2);
+    border-radius: 4px;
+    color: var(--white);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+  }
+
+  .skip-btn:hover:not(:disabled) {
+    border-color: var(--gold);
+    color: var(--gold);
+    background: rgba(240,192,64,0.08);
+  }
+
+  .skip-btn:disabled { opacity: 0.2; cursor: not-allowed; }
+
+  /* PLAYER PICK LIST */
+  .pick-section {
+    margin-bottom: 24px;
+  }
+
+  .pick-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .pick-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 2px;
+  }
+
+  .pick-pos-label {
+    font-size: 11px;
+    background: var(--lime);
+    color: var(--ink);
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-weight: 600;
+    letter-spacing: 1px;
+  }
+
+  .player-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .player-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 4px;
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .player-card:hover {
+    border-color: var(--lime);
+    background: rgba(184,247,46,0.07);
+    transform: translateX(4px);
+  }
+
+  .player-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    color: var(--lime);
+    opacity: 0.6;
+    width: 36px;
+    text-align: center;
+  }
+
+  .player-info { flex: 1; }
+
+  .player-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: 16px;
+  }
+
+  .player-detail {
+    font-size: 10px;
+    opacity: 0.5;
+    margin-top: 2px;
+    letter-spacing: 0.5px;
+  }
+
+  .player-stats {
+    display: flex;
+    gap: 12px;
+  }
+
+  .stat-pill {
+    text-align: center;
+  }
+
+  .stat-val {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    color: var(--cream);
+  }
+
+  .stat-lbl {
+    font-size: 8px;
+    opacity: 0.45;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* RESULT SCREEN */
+  .result-screen {
+    display: none;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .result-screen.show { display: block; }
+
+  .result-record {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(64px, 14vw, 120px);
+    line-height: 1;
+    letter-spacing: -2px;
+    color: var(--lime);
+    text-shadow: 0 0 40px rgba(184,247,46,0.4);
+    margin-bottom: 8px;
+  }
+
+  .result-record.bad { color: var(--red); text-shadow: 0 0 40px rgba(232,48,48,0.4); }
+
+  .result-verdict {
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    font-size: 22px;
+    opacity: 0.8;
+    margin-bottom: 32px;
+  }
+
+  .result-breakdown {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 10px;
+    max-width: 600px;
+    margin: 0 auto 32px;
+    text-align: left;
+  }
+
+  .breakdown-card {
+    background: rgba(0,0,0,0.35);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 4px;
+    padding: 12px;
+  }
+
+  .breakdown-pos {
+    font-size: 9px;
+    opacity: 0.4;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .breakdown-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: 14px;
+  }
+
+  .breakdown-rating {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    color: var(--lime);
+    margin-top: 2px;
+  }
+
+  .btn-restart {
+    padding: 14px 40px;
+    background: transparent;
+    border: 2px solid var(--lime);
+    color: var(--lime);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 3px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s;
+  }
+
+  .btn-restart:hover {
+    background: var(--lime);
+    color: var(--ink);
+  }
+
+  /* STATUS BAR */
+  .status-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    font-size: 11px;
+    opacity: 0.6;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .round-dots {
+    display: flex;
+    gap: 6px;
+  }
+
+  .round-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+  }
+
+  .round-dot.done { background: var(--lime); }
+  .round-dot.active { background: var(--gold); }
+
+  /* Hiding utils */
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="title">38-0</div>
+    <div class="subtitle">Build the perfect XI. Go unbeaten. Become immortal.</div>
+    <div class="rules-strip">
+      <span>5 rounds · 1 player per slot</span>
+      <span>1 club skip · 1 era skip</span>
+      <span>Era-adjusted simulation</span>
+    </div>
+  </header>
+
+  <!-- PITCH FORMATION VIEW -->
+  <div class="pitch-view">
+    <div class="formation" id="formation">
+      <!-- GK -->
+      <div class="formation-row">
+        <div class="player-slot" id="slot-GK" data-pos="GK">
+          <div class="slot-pos">GK</div>
+          <div class="slot-empty-icon">⬡</div>
+        </div>
+      </div>
+      <!-- DEF -->
+      <div class="formation-row">
+        <div class="player-slot" id="slot-RB" data-pos="RB">
+          <div class="slot-pos">RB</div><div class="slot-empty-icon">⬡</div>
+        </div>
+        <div class="player-slot" id="slot-CB1" data-pos="CB">
+          <div class="slot-pos">CB</div><div class="slot-empty-icon">⬡</div>
+        </div>
+        <div class="player-slot" id="slot-CB2" data-pos="CB">
+          <div class="slot-pos">CB</div><div class="slot-empty-icon">⬡</div>
+        </div>
+        <div class="player-slot" id="slot-LB" data-pos="LB">
+          <div class="slot-pos">LB</div><div class="slot-empty-icon">⬡</div>
+        </div>
+      </div>
+      <!-- MID -->
+      <div class="formation-row">
+        <div class="player-slot" id="slot-CM1" data-pos="CM">
+          <div class="slot-pos">CM</div><div class="slot-empty-icon">⬡</div>
+        </div>
+        <div class="player-slot" id="slot-CM2" data-pos="CM">
+          <div class="slot-pos">CM</div><div class="slot-empty-icon">⬡</div>
+        </div>
+        <div class="player-slot" id="slot-CM3" data-pos="CM">
+          <div class="slot-pos">CM</div><div class="slot-empty-icon">⬡</div>
+        </div>
+      </div>
+      <!-- ATT -->
+      <div class="formation-row">
+        <div class="player-slot" id="slot-LW" data-pos="LW">
+          <div class="slot-pos">LW</div><div class="slot-empty-icon">⬡</div>
+        </div>
+        <div class="player-slot" id="slot-ST" data-pos="ST">
+          <div class="slot-pos">ST</div><div class="slot-empty-icon">⬡</div>
+        </div>
+        <div class="player-slot" id="slot-RW" data-pos="RW">
+          <div class="slot-pos">RW</div><div class="slot-empty-icon">⬡</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN GAME SECTION -->
+  <div id="game-section">
+    <!-- Status -->
+    <div class="status-bar">
+      <span id="round-label">Round 1 of 5</span>
+      <div class="round-dots">
+        <div class="round-dot active" id="dot-0"></div>
+        <div class="round-dot" id="dot-1"></div>
+        <div class="round-dot" id="dot-2"></div>
+        <div class="round-dot" id="dot-3"></div>
+        <div class="round-dot" id="dot-4"></div>
+      </div>
+    </div>
+
+    <!-- Slot Machine -->
+    <div class="machine-section">
+      <div class="machine-label">▶ Spin to get your draw</div>
+      <div class="reels">
+        <div class="reel">
+          <div class="reel-inner" id="reel-club">
+            <div class="reel-value" id="reel-club-val">?????</div>
+            <div class="reel-label">Club</div>
+          </div>
+        </div>
+        <div class="reel">
+          <div class="reel-inner" id="reel-era">
+            <div class="reel-value" id="reel-era-val">????s</div>
+            <div class="reel-label">Era</div>
+          </div>
+        </div>
+        <div class="reel">
+          <div class="reel-inner" id="reel-pos">
+            <div class="reel-value" id="reel-pos-val">??</div>
+            <div class="reel-label">Position</div>
+          </div>
+        </div>
+      </div>
+      <button class="btn-spin" id="btn-spin" onclick="doSpin()">SPIN</button>
+    </div>
+
+    <!-- Skip buttons -->
+    <div class="skip-bar">
+      <button class="skip-btn" id="skip-club-btn" onclick="skipClub()" disabled>
+        ✦ Skip Club <span id="club-skip-count">(1 left)</span>
+      </button>
+      <button class="skip-btn" id="skip-era-btn" onclick="skipEra()" disabled>
+        ✦ Skip Era <span id="era-skip-count">(1 left)</span>
+      </button>
+    </div>
+
+    <!-- Player picks -->
+    <div class="pick-section hidden" id="pick-section">
+      <div class="pick-header">
+        <div class="pick-title" id="pick-title">Choose your player</div>
+        <div class="pick-pos-label" id="pick-pos-label">GK</div>
+      </div>
+      <div class="player-list" id="player-list"></div>
+    </div>
+  </div>
+
+  <!-- RESULT SCREEN -->
+  <div class="result-screen" id="result-screen">
+    <div class="result-record" id="result-record">38-0-0</div>
+    <div class="result-verdict" id="result-verdict">An era-defining side.</div>
+    <div class="result-breakdown" id="result-breakdown"></div>
+    <button class="btn-restart" onclick="restartGame()">PLAY AGAIN</button>
+  </div>
+</div>
+
+<script>
+// ─── DATA ───────────────────────────────────────────────────────────────────
+
+const CLUBS = [
+  'Real Madrid','Barcelona','Manchester Utd','Chelsea','Arsenal',
+  'Liverpool','Bayern Munich','Juventus','AC Milan','Inter Milan',
+  'Boca Juniors','Ajax','PSG','Atletico Madrid','Benfica',
+  'Borussia Dortmund','Porto','Tottenham','Roma','Napoli'
+];
+
+const ERAS = ['1960s','1970s','1980s','1990s','2000s','2010s','2020s'];
+
+const POSITIONS_ORDER = ['GK','DEF','MID','ATT','ATT'];
+
+const POS_MAP = {
+  GK:  ['GK'],
+  DEF: ['RB','CB1','CB2','LB'],
+  MID: ['CM1','CM2','CM3'],
+  ATT: ['LW','ST','RW']
+};
+
+// Full player database keyed by [club][era][position]
+// Each player: { name, club, era, pos, goals, assists, rating, caps }
+const PLAYERS = {
+  'Real Madrid': {
+    '1960s': [
+      { name:'Alfredo Di Stéfano', pos:'ST', goals:308, assists:120, rating:96, caps:282 },
+      { name:'Ferenc Puskás',      pos:'ST', goals:242, assists:89,  rating:94, caps:180 },
+      { name:'Gento',              pos:'LW', goals:128, assists:142, rating:89, caps:428 },
+      { name:'José Santamaría',    pos:'CB', goals:12,  assists:18,  rating:88, caps:234 },
+    ],
+    '1980s': [
+      { name:'Emilio Butragueño',  pos:'ST', goals:164, assists:91,  rating:88, caps:341 },
+      { name:'Hugo Sánchez',       pos:'ST', goals:208, assists:60,  rating:90, caps:282 },
+      { name:'Michel',             pos:'CM', goals:133, assists:140, rating:87, caps:282 },
+    ],
+    '1990s': [
+      { name:'Raúl',               pos:'ST', goals:323, assists:103, rating:91, caps:741 },
+      { name:'Predrag Mijatović',  pos:'ST', goals:83,  assists:72,  rating:85, caps:204 },
+      { name:'Roberto Carlos',     pos:'LB', goals:67,  assists:166, rating:93, caps:527 },
+    ],
+    '2000s': [
+      { name:'Ronaldo Nazário',    pos:'ST', goals:177, assists:58,  rating:95, caps:236 },
+      { name:'Zinedine Zidane',    pos:'CM', goals:104, assists:183, rating:97, caps:227 },
+      { name:'Iker Casillas',      pos:'GK', goals:0,   assists:4,   rating:92, caps:725 },
+      { name:'Roberto Carlos',     pos:'LB', goals:67,  assists:166, rating:93, caps:527 },
+      { name:'Sergio Ramos',       pos:'CB', goals:101, assists:38,  rating:91, caps:671 },
+    ],
+    '2010s': [
+      { name:'Cristiano Ronaldo',  pos:'ST', goals:450, assists:131, rating:98, caps:438 },
+      { name:'Karim Benzema',      pos:'ST', goals:354, assists:165, rating:93, caps:648 },
+      { name:'Luka Modrić',        pos:'CM', goals:72,  assists:193, rating:95, caps:514 },
+      { name:'Toni Kroos',         pos:'CM', goals:52,  assists:160, rating:93, caps:463 },
+      { name:'Sergio Ramos',       pos:'CB', goals:101, assists:38,  rating:91, caps:671 },
+      { name:'Marcelo',            pos:'LB', goals:38,  assists:101, rating:89, caps:546 },
+    ],
+    '2020s': [
+      { name:'Vinícius Jr.',       pos:'LW', goals:174, assists:98,  rating:93, caps:348 },
+      { name:'Jude Bellingham',    pos:'CM', goals:78,  assists:69,  rating:92, caps:184 },
+      { name:'Karim Benzema',      pos:'ST', goals:354, assists:165, rating:93, caps:648 },
+    ],
+  },
+  'Barcelona': {
+    '1970s': [
+      { name:'Johan Cruyff',       pos:'ST', goals:192, assists:143, rating:97, caps:256 },
+      { name:'Johan Neeskens',     pos:'CM', goals:55,  assists:102, rating:90, caps:175 },
+    ],
+    '1980s': [
+      { name:'Diego Maradona',     pos:'CM', goals:38,  assists:58,  rating:97, caps:36  },
+      { name:'Gary Lineker',       pos:'ST', goals:52,  assists:28,  rating:87, caps:144 },
+    ],
+    '1990s': [
+      { name:'Ronaldo Nazário',    pos:'ST', goals:47,  assists:22,  rating:94, caps:49  },
+      { name:'Rivaldo',            pos:'LW', goals:136, assists:89,  rating:92, caps:228 },
+      { name:'Pep Guardiola',      pos:'CM', goals:47,  assists:138, rating:88, caps:263 },
+    ],
+    '2000s': [
+      { name:'Ronaldinho',         pos:'LW', goals:94,  assists:104, rating:97, caps:207 },
+      { name:'Samuel Eto\'o',      pos:'ST', goals:108, assists:53,  rating:92, caps:207 },
+      { name:'Xavi Hernández',     pos:'CM', goals:55,  assists:178, rating:94, caps:767 },
+      { name:'Andrés Iniesta',     pos:'CM', goals:57,  assists:186, rating:94, caps:672 },
+    ],
+    '2010s': [
+      { name:'Lionel Messi',       pos:'RW', goals:672, assists:303, rating:99, caps:778 },
+      { name:'Xavi Hernández',     pos:'CM', goals:55,  assists:178, rating:94, caps:767 },
+      { name:'Andrés Iniesta',     pos:'CM', goals:57,  assists:186, rating:94, caps:672 },
+      { name:'Gerard Piqué',       pos:'CB', goals:53,  assists:18,  rating:89, caps:580 },
+    ],
+    '2020s': [
+      { name:'Robert Lewandowski', pos:'ST', goals:75,  assists:22,  rating:91, caps:158 },
+      { name:'Pedri',              pos:'CM', goals:38,  assists:52,  rating:90, caps:194 },
+    ],
+  },
+  'Manchester Utd': {
+    '1960s': [
+      { name:'George Best',        pos:'RW', goals:137, assists:98,  rating:96, caps:361 },
+      { name:'Denis Law',          pos:'ST', goals:237, assists:72,  rating:94, caps:404 },
+      { name:'Bobby Charlton',     pos:'CM', goals:199, assists:92,  rating:93, caps:758 },
+    ],
+    '1990s': [
+      { name:'Eric Cantona',       pos:'ST', goals:82,  assists:69,  rating:93, caps:185 },
+      { name:'Roy Keane',          pos:'CM', goals:51,  assists:86,  rating:91, caps:480 },
+      { name:'Peter Schmeichel',   pos:'GK', goals:1,   assists:5,   rating:93, caps:398 },
+    ],
+    '2000s': [
+      { name:'Cristiano Ronaldo',  pos:'RW', goals:118, assists:60,  rating:96, caps:292 },
+      { name:'Wayne Rooney',       pos:'ST', goals:253, assists:145, rating:91, caps:559 },
+      { name:'Paul Scholes',       pos:'CM', goals:155, assists:162, rating:92, caps:718 },
+      { name:'Rio Ferdinand',      pos:'CB', goals:8,   assists:12,  rating:91, caps:455 },
+      { name:'Gary Neville',       pos:'RB', goals:7,   assists:20,  rating:88, caps:598 },
+    ],
+    '2010s': [
+      { name:'Wayne Rooney',       pos:'ST', goals:253, assists:145, rating:91, caps:559 },
+      { name:'Robin van Persie',   pos:'ST', goals:58,  assists:30,  rating:89, caps:104 },
+    ],
+    '2020s': [
+      { name:'Bruno Fernandes',    pos:'CM', goals:92,  assists:88,  rating:89, caps:216 },
+      { name:'Marcus Rashford',    pos:'LW', goals:84,  assists:53,  rating:87, caps:268 },
+    ],
+  },
+  'Liverpool': {
+    '1970s': [
+      { name:'Kevin Keegan',       pos:'ST', goals:100, assists:68,  rating:90, caps:322 },
+      { name:'Kenny Dalglish',     pos:'ST', goals:172, assists:118, rating:94, caps:515 },
+      { name:'Terry McDermott',    pos:'CM', goals:81,  assists:92,  rating:86, caps:329 },
+    ],
+    '1980s': [
+      { name:'Kenny Dalglish',     pos:'ST', goals:172, assists:118, rating:94, caps:515 },
+      { name:'Ian Rush',           pos:'ST', goals:346, assists:88,  rating:92, caps:660 },
+      { name:'John Barnes',        pos:'LW', goals:108, assists:123, rating:90, caps:403 },
+    ],
+    '2000s': [
+      { name:'Steven Gerrard',     pos:'CM', goals:186, assists:162, rating:93, caps:710 },
+      { name:'Xabi Alonso',        pos:'CM', goals:46,  assists:91,  rating:91, caps:210 },
+      { name:'Fernando Torres',    pos:'ST', goals:81,  assists:37,  rating:91, caps:214 },
+      { name:'Pepe Reina',         pos:'GK', goals:0,   assists:2,   rating:88, caps:285 },
+    ],
+    '2010s': [
+      { name:'Mohamed Salah',      pos:'RW', goals:228, assists:98,  rating:95, caps:439 },
+      { name:'Sadio Mané',         pos:'LW', goals:120, assists:62,  rating:91, caps:269 },
+      { name:'Virgil van Dijk',    pos:'CB', goals:24,  assists:14,  rating:92, caps:317 },
+      { name:'Roberto Firmino',    pos:'ST', goals:111, assists:111, rating:89, caps:362 },
+    ],
+    '2020s': [
+      { name:'Mohamed Salah',      pos:'RW', goals:228, assists:98,  rating:95, caps:439 },
+      { name:'Darwin Núñez',       pos:'ST', goals:71,  assists:38,  rating:87, caps:156 },
+    ],
+  },
+  'Bayern Munich': {
+    '1970s': [
+      { name:'Franz Beckenbauer',  pos:'CB', goals:95,  assists:72,  rating:97, caps:660 },
+      { name:'Gerd Müller',        pos:'ST', goals:564, assists:178, rating:98, caps:728 },
+      { name:'Karl-Heinz Rummenigge', pos:'ST', goals:162, assists:88, rating:92, caps:397 },
+    ],
+    '1980s': [
+      { name:'Karl-Heinz Rummenigge', pos:'ST', goals:162, assists:88, rating:92, caps:397 },
+    ],
+    '2000s': [
+      { name:'Oliver Kahn',        pos:'GK', goals:0,   assists:2,   rating:94, caps:632 },
+      { name:'Franck Ribéry',      pos:'LW', goals:124, assists:192, rating:92, caps:425 },
+      { name:'Arjen Robben',       pos:'RW', goals:144, assists:103, rating:91, caps:309 },
+    ],
+    '2010s': [
+      { name:'Robert Lewandowski', pos:'ST', goals:344, assists:72,  rating:95, caps:533 },
+      { name:'Franck Ribéry',      pos:'LW', goals:124, assists:192, rating:92, caps:425 },
+      { name:'Thomas Müller',      pos:'RW', goals:246, assists:268, rating:91, caps:747 },
+      { name:'Manuel Neuer',       pos:'GK', goals:0,   assists:0,   rating:94, caps:597 },
+      { name:'David Alaba',        pos:'LB', goals:52,  assists:62,  rating:89, caps:393 },
+    ],
+    '2020s': [
+      { name:'Harry Kane',         pos:'ST', goals:88,  assists:38,  rating:91, caps:204 },
+      { name:'Leroy Sané',         pos:'RW', goals:92,  assists:84,  rating:89, caps:266 },
+    ],
+  },
+  'Chelsea': {
+    '2000s': [
+      { name:'Frank Lampard',      pos:'CM', goals:211, assists:177, rating:91, caps:648 },
+      { name:'John Terry',         pos:'CB', goals:68,  assists:12,  rating:91, caps:717 },
+      { name:'Didier Drogba',      pos:'ST', goals:164, assists:74,  rating:93, caps:381 },
+      { name:'Michael Essien',     pos:'CM', goals:28,  assists:44,  rating:88, caps:256 },
+      { name:'Petr Čech',          pos:'GK', goals:0,   assists:0,   rating:91, caps:494 },
+    ],
+    '2010s': [
+      { name:'Didier Drogba',      pos:'ST', goals:164, assists:74,  rating:93, caps:381 },
+      { name:'Eden Hazard',        pos:'LW', goals:110, assists:113, rating:93, caps:352 },
+    ],
+  },
+  'Arsenal': {
+    '1990s': [
+      { name:'Tony Adams',         pos:'CB', goals:48,  assists:8,   rating:89, caps:669 },
+      { name:'Patrick Vieira',     pos:'CM', goals:63,  assists:97,  rating:92, caps:406 },
+      { name:'Dennis Bergkamp',    pos:'ST', goals:120, assists:162, rating:94, caps:423 },
+      { name:'Marc Overmars',      pos:'LW', goals:41,  assists:66,  rating:88, caps:142 },
+    ],
+    '2000s': [
+      { name:'Thierry Henry',      pos:'ST', goals:228, assists:132, rating:96, caps:370 },
+      { name:'Patrick Vieira',     pos:'CM', goals:63,  assists:97,  rating:92, caps:406 },
+      { name:'Robert Pires',       pos:'LW', goals:84,  assists:107, rating:90, caps:284 },
+      { name:'Ashley Cole',        pos:'LB', goals:18,  assists:32,  rating:90, caps:282 },
+    ],
+    '2020s': [
+      { name:'Bukayo Saka',        pos:'RW', goals:78,  assists:74,  rating:90, caps:218 },
+      { name:'Martin Ødegaard',    pos:'CM', goals:62,  assists:58,  rating:89, caps:188 },
+    ],
+  },
+  'Juventus': {
+    '1980s': [
+      { name:'Michel Platini',     pos:'CM', goals:104, assists:90,  rating:97, caps:147 },
+      { name:'Zbigniew Boniek',    pos:'ST', goals:52,  assists:48,  rating:89, caps:82  },
+    ],
+    '1990s': [
+      { name:'Alessandro Del Piero', pos:'ST', goals:290, assists:134, rating:92, caps:705 },
+      { name:'Zinedine Zidane',    pos:'CM', goals:30,  assists:74,  rating:96, caps:104 },
+      { name:'Pavel Nedvěd',       pos:'LW', goals:68,  assists:72,  rating:91, caps:200 },
+    ],
+    '2000s': [
+      { name:'Alessandro Del Piero', pos:'ST', goals:290, assists:134, rating:92, caps:705 },
+      { name:'Gianluigi Buffon',   pos:'GK', goals:0,   assists:0,   rating:95, caps:903 },
+    ],
+    '2010s': [
+      { name:'Cristiano Ronaldo',  pos:'ST', goals:101, assists:22,  rating:95, caps:134 },
+      { name:'Gianluigi Buffon',   pos:'GK', goals:0,   assists:0,   rating:95, caps:903 },
+      { name:'Giorgio Chiellini',  pos:'CB', goals:36,  assists:18,  rating:90, caps:559 },
+      { name:'Andrea Pirlo',       pos:'CM', goals:58,  assists:144, rating:93, caps:164 },
+    ],
+  },
+  'AC Milan': {
+    '1980s': [
+      { name:'Marco van Basten',   pos:'ST', goals:200, assists:78,  rating:97, caps:280 },
+      { name:'Ruud Gullit',        pos:'CM', goals:122, assists:104, rating:95, caps:271 },
+      { name:'Frank Rijkaard',     pos:'CM', goals:36,  assists:58,  rating:91, caps:237 },
+      { name:'Paolo Maldini',      pos:'LB', goals:33,  assists:37,  rating:96, caps:902 },
+    ],
+    '1990s': [
+      { name:'George Weah',        pos:'ST', goals:82,  assists:44,  rating:92, caps:201 },
+      { name:'Zvonimir Boban',     pos:'CM', goals:30,  assists:52,  rating:89, caps:202 },
+      { name:'Paolo Maldini',      pos:'LB', goals:33,  assists:37,  rating:96, caps:902 },
+    ],
+    '2000s': [
+      { name:'Kaká',               pos:'CM', goals:104, assists:118, rating:96, caps:193 },
+      { name:'Andriy Shevchenko', pos:'ST', goals:175, assists:58,  rating:94, caps:295 },
+      { name:'Paolo Maldini',      pos:'LB', goals:33,  assists:37,  rating:96, caps:902 },
+      { name:'Alessandro Nesta',   pos:'CB', goals:14,  assists:8,   rating:94, caps:374 },
+    ],
+  },
+  'Ajax': {
+    '1970s': [
+      { name:'Johan Cruyff',       pos:'ST', goals:190, assists:140, rating:98, caps:342 },
+      { name:'Johnny Rep',         pos:'RW', goals:62,  assists:48,  rating:88, caps:206 },
+    ],
+    '1990s': [
+      { name:'Patrick Kluivert',   pos:'ST', goals:122, assists:58,  rating:88, caps:79  },
+      { name:'Clarence Seedorf',   pos:'CM', goals:56,  assists:78,  rating:89, caps:87  },
+      { name:'Marc Overmars',      pos:'LW', goals:55,  assists:72,  rating:88, caps:79  },
+      { name:'Edwin van der Sar',  pos:'GK', goals:0,   assists:0,   rating:90, caps:281 },
+    ],
+    '2010s': [
+      { name:'Frenkie de Jong',    pos:'CM', goals:28,  assists:42,  rating:88, caps:116 },
+      { name:'Matthijs de Ligt',   pos:'CB', goals:12,  assists:6,   rating:87, caps:82  },
+      { name:'Donny van de Beek',  pos:'CM', goals:40,  assists:48,  rating:86, caps:130 },
+    ],
+  },
+  'PSG': {
+    '2010s': [
+      { name:'Zlatan Ibrahimović', pos:'ST', goals:156, assists:60,  rating:92, caps:180 },
+      { name:'Edinson Cavani',     pos:'ST', goals:200, assists:72,  rating:91, caps:301 },
+      { name:'Marquinhos',         pos:'CB', goals:42,  assists:20,  rating:89, caps:399 },
+    ],
+    '2020s': [
+      { name:'Kylian Mbappé',      pos:'ST', goals:256, assists:108, rating:96, caps:360 },
+      { name:'Neymar Jr.',         pos:'LW', goals:118, assists:78,  rating:92, caps:221 },
+      { name:'Marquinhos',         pos:'CB', goals:42,  assists:20,  rating:89, caps:399 },
+    ],
+  },
+  'Atletico Madrid': {
+    '2000s': [
+      { name:'Fernando Torres',    pos:'ST', goals:91,  assists:40,  rating:90, caps:174 },
+    ],
+    '2010s': [
+      { name:'Diego Forlán',       pos:'ST', goals:84,  assists:40,  rating:90, caps:147 },
+      { name:'Antoine Griezmann',  pos:'ST', goals:182, assists:80,  rating:92, caps:340 },
+      { name:'Diego Costa',        pos:'ST', goals:83,  assists:28,  rating:88, caps:174 },
+      { name:'Filipe Luís',        pos:'LB', goals:12,  assists:48,  rating:87, caps:313 },
+      { name:'Jan Oblak',          pos:'GK', goals:0,   assists:0,   rating:93, caps:420 },
+    ],
+    '2020s': [
+      { name:'Jan Oblak',          pos:'GK', goals:0,   assists:0,   rating:93, caps:420 },
+      { name:'Antoine Griezmann',  pos:'ST', goals:182, assists:80,  rating:92, caps:340 },
+    ],
+  },
+  'Inter Milan': {
+    '1960s': [
+      { name:'Sandro Mazzola',     pos:'CM', goals:116, assists:78,  rating:90, caps:564 },
+      { name:'Helenio Herrera (system)', pos:'CM', goals:0, assists:0, rating:82, caps:0 },
+    ],
+    '2000s': [
+      { name:'Ronaldo Nazário',    pos:'ST', goals:59,  assists:20,  rating:93, caps:68  },
+      { name:'Adriano',            pos:'ST', goals:74,  assists:33,  rating:90, caps:157 },
+      { name:'Esteban Cambiasso',  pos:'CM', goals:32,  assists:58,  rating:88, caps:281 },
+    ],
+    '2010s': [
+      { name:'Diego Milito',       pos:'ST', goals:82,  assists:28,  rating:88, caps:86  },
+      { name:'Wesley Sneijder',    pos:'CM', goals:78,  assists:82,  rating:90, caps:134 },
+    ],
+    '2020s': [
+      { name:'Lautaro Martínez',   pos:'ST', goals:180, assists:58,  rating:91, caps:312 },
+      { name:'Nicolo Barella',     pos:'CM', goals:38,  assists:68,  rating:89, caps:234 },
+    ],
+  },
+  'Boca Juniors': {
+    '1980s': [
+      { name:'Diego Maradona',     pos:'CM', goals:28,  assists:52,  rating:98, caps:40  },
+    ],
+    '2000s': [
+      { name:'Juan Román Riquelme', pos:'CM', goals:88, assists:124, rating:92, caps:316 },
+    ],
+  },
+  'Borussia Dortmund': {
+    '2010s': [
+      { name:'Robert Lewandowski', pos:'ST', goals:103, assists:42,  rating:92, caps:187 },
+      { name:'Marco Reus',         pos:'LW', goals:168, assists:138, rating:91, caps:429 },
+      { name:'Mario Götze',        pos:'CM', goals:103, assists:112, rating:89, caps:341 },
+    ],
+    '2020s': [
+      { name:'Erling Haaland',     pos:'ST', goals:86,  assists:23,  rating:94, caps:89  },
+      { name:'Jude Bellingham',    pos:'CM', goals:23,  assists:21,  rating:91, caps:61  },
+    ],
+  },
+  'Porto': {
+    '2000s': [
+      { name:'Deco',               pos:'CM', goals:55,  assists:84,  rating:91, caps:164 },
+      { name:'Benni McCarthy',     pos:'ST', goals:35,  assists:18,  rating:85, caps:103 },
+    ],
+  },
+  'Tottenham': {
+    '2010s': [
+      { name:'Harry Kane',         pos:'ST', goals:280, assists:68,  rating:91, caps:477 },
+      { name:'Heung-min Son',      pos:'LW', goals:163, assists:91,  rating:90, caps:462 },
+      { name:'Gareth Bale',        pos:'RW', goals:71,  assists:48,  rating:89, caps:203 },
+    ],
+  },
+  'Roma': {
+    '2000s': [
+      { name:'Francesco Totti',    pos:'ST', goals:307, assists:216, rating:93, caps:786 },
+      { name:'Gabriel Batistuta',  pos:'ST', goals:78,  assists:28,  rating:93, caps:78  },
+    ],
+  },
+  'Napoli': {
+    '1980s': [
+      { name:'Diego Maradona',     pos:'CM', goals:115, assists:79,  rating:99, caps:259 },
+    ],
+    '2020s': [
+      { name:'Victor Osimhen',     pos:'ST', goals:76,  assists:18,  rating:89, caps:108 },
+      { name:'Khvicha Kvaratskhelia', pos:'LW', goals:58, assists:44, rating:88, caps:102 },
+    ],
+  },
+  'Benfica': {
+    '1960s': [
+      { name:'Eusébio',            pos:'ST', goals:473, assists:160, rating:97, caps:614 },
+      { name:'Mário Coluna',       pos:'CM', goals:86,  assists:72,  rating:88, caps:275 },
+    ],
+  },
+};
+
+// ─── GAME STATE ──────────────────────────────────────────────────────────────
+
+const ROUND_POSITIONS = ['GK', 'DEF', 'MID', 'ATT', 'ATT'];
+const SLOT_IDS = {
+  GK:  ['slot-GK'],
+  DEF: ['slot-RB','slot-CB1','slot-CB2','slot-LB'],
+  MID: ['slot-CM1','slot-CM2','slot-CM3'],
+  ATT: ['slot-LW','slot-ST','slot-RW'],
+};
+
+let state = {
+  round: 0,
+  clubSkipsLeft: 1,
+  eraSkipsLeft: 1,
+  currentClub: null,
+  currentEra: null,
+  currentPos: null,
+  spunThisRound: false,
+  roster: {},   // slotId -> player
+  filledSlots: {},
+};
+
+function getAvailableSlots(pos) {
+  return SLOT_IDS[pos].filter(id => !state.filledSlots[id]);
+}
+
+function pickRandomClub() {
+  return CLUBS[Math.floor(Math.random() * CLUBS.length)];
+}
+
+function pickRandomEra() {
+  return ERAS[Math.floor(Math.random() * ERAS.length)];
+}
+
+function getPlayersForDraw(club, era, pos) {
+  const clubData = PLAYERS[club] || {};
+  const eraData = clubData[era] || [];
+  const posAliases = {
+    GK: ['GK'], DEF: ['CB','RB','LB','RWB','LWB'], MID: ['CM','DM','AM'], ATT: ['ST','LW','RW','CF']
+  };
+  const aliases = posAliases[pos] || [pos];
+  let players = eraData.filter(p => aliases.includes(p.pos));
+
+  // Fallback: if no specific match, take any players and assign them
+  if (players.length === 0) {
+    players = eraData.slice(0, 3);
+  }
+
+  // If still empty, generate fallback players
+  if (players.length === 0) {
+    players = generateFallbackPlayers(club, era, pos);
+  }
+
+  return players.slice(0, 3);
+}
+
+function generateFallbackPlayers(club, era, pos) {
+  const names = [
+    ['Carlos','Mendez'], ['Jean','Dupont'], ['Marco','Rossi'],
+    ['Ali','Hassan'], ['Pedro','Silva'],
+  ];
+  return names.slice(0,2).map(([f,l]) => ({
+    name: `${f} ${l}`,
+    pos: pos === 'DEF' ? 'CB' : pos === 'MID' ? 'CM' : pos === 'GK' ? 'GK' : 'ST',
+    goals: Math.floor(Math.random()*60),
+    assists: Math.floor(Math.random()*60),
+    rating: 78 + Math.floor(Math.random()*8),
+    caps: 100 + Math.floor(Math.random()*200),
+  }));
+}
+
+// ─── UI HELPERS ──────────────────────────────────────────────────────────────
+
+function updateDots() {
+  for (let i = 0; i < 5; i++) {
+    const dot = document.getElementById(`dot-${i}`);
+    dot.className = 'round-dot';
+    if (i < state.round) dot.classList.add('done');
+    else if (i === state.round) dot.classList.add('active');
+  }
+}
+
+function setReelValue(id, val) {
+  document.getElementById(id).textContent = val;
+}
+
+function spinAnimation(reelId, finalValue, delay, cb) {
+  const inner = document.getElementById(reelId);
+  inner.classList.add('spinning');
+  const valueEl = document.getElementById(reelId + '-val');
+
+  const frames = 18;
+  let count = 0;
+  const interval = setInterval(() => {
+    valueEl.textContent = '????'.slice(0, Math.floor(Math.random()*4)+1) + '...'.slice(0,Math.random()>0.5?1:0);
+    count++;
+    if (count >= frames) {
+      clearInterval(interval);
+      inner.classList.remove('spinning');
+      valueEl.textContent = finalValue;
+      if (cb) cb();
+    }
+  }, 60);
+}
+
+function showPickSection(players, pos) {
+  const section = document.getElementById('pick-section');
+  section.classList.remove('hidden');
+  document.getElementById('pick-title').textContent =
+    `${state.currentClub} · ${state.currentEra}`;
+  document.getElementById('pick-pos-label').textContent = pos;
+
+  const list = document.getElementById('player-list');
+  list.innerHTML = '';
+  players.forEach((p, i) => {
+    const div = document.createElement('div');
+    div.className = 'player-card';
+    div.innerHTML = `
+      <div class="player-num">${i+1}</div>
+      <div class="player-info">
+        <div class="player-name">${p.name}</div>
+        <div class="player-detail">${p.pos} · ${p.caps} apps</div>
+      </div>
+      <div class="player-stats">
+        <div class="stat-pill"><div class="stat-val">${p.goals}</div><div class="stat-lbl">Goals</div></div>
+        <div class="stat-pill"><div class="stat-val">${p.assists}</div><div class="stat-lbl">Ast</div></div>
+        <div class="stat-pill"><div class="stat-val">${p.rating}</div><div class="stat-lbl">Rtg</div></div>
+      </div>
+    `;
+    div.onclick = () => pickPlayer(p);
+    list.appendChild(div);
+  });
+}
+
+function fillSlot(slotId, player) {
+  const slot = document.getElementById(slotId);
+  slot.classList.remove('active-slot');
+  slot.classList.add('filled');
+  const pos = slot.dataset.pos;
+  slot.innerHTML = `
+    <div class="slot-pos">${pos}</div>
+    <div class="slot-name">${player.name.split(' ').pop()}</div>
+    <div class="slot-meta">${player.era || ''}</div>
+  `;
+}
+
+function highlightNextSlots(pos) {
+  const available = getAvailableSlots(pos);
+  if (available.length > 0) {
+    document.getElementById(available[0]).classList.add('active-slot');
+  }
+}
+
+// ─── GAME LOGIC ──────────────────────────────────────────────────────────────
+
+function doSpin() {
+  if (state.round >= 5) return;
+  const pos = ROUND_POSITIONS[state.round];
+  const club = pickRandomClub();
+  const era = (() => {
+    const clubEras = Object.keys(PLAYERS[club] || {});
+    if (clubEras.length === 0) return ERAS[Math.floor(Math.random()*ERAS.length)];
+    return clubEras[Math.floor(Math.random()*clubEras.length)];
+  })();
+
+  state.currentClub = club;
+  state.currentEra = era;
+  state.currentPos = pos;
+  state.spunThisRound = true;
+
+  document.getElementById('btn-spin').disabled = true;
+  document.getElementById('pick-section').classList.add('hidden');
+
+  // Animate reels
+  spinAnimation('reel-club', club, 0, () => {
+    spinAnimation('reel-era', era, 200, () => {
+      spinAnimation('reel-pos', pos, 100, () => {
+        // Show skip buttons
+        document.getElementById('skip-club-btn').disabled = state.clubSkipsLeft === 0;
+        document.getElementById('skip-era-btn').disabled = state.eraSkipsLeft === 0;
+
+        // Show players
+        const players = getPlayersForDraw(club, era, pos);
+        showPickSection(players, pos);
+        highlightNextSlots(pos);
+        document.getElementById('round-label').textContent = `Round ${state.round+1} of 5 — Pick your ${pos}`;
+      });
+    });
+  });
+}
+
+function skipClub() {
+  if (state.clubSkipsLeft === 0 || !state.spunThisRound) return;
+  state.clubSkipsLeft--;
+  document.getElementById('club-skip-count').textContent = '(0 left)';
+  document.getElementById('skip-club-btn').disabled = true;
+
+  const pos = state.currentPos;
+  const newClub = pickRandomClub();
+  state.currentClub = newClub;
+
+  spinAnimation('reel-club', newClub, 0, () => {
+    const players = getPlayersForDraw(newClub, state.currentEra, pos);
+    showPickSection(players, pos);
+  });
+}
+
+function skipEra() {
+  if (state.eraSkipsLeft === 0 || !state.spunThisRound) return;
+  state.eraSkipsLeft--;
+  document.getElementById('era-skip-count').textContent = '(0 left)';
+  document.getElementById('skip-era-btn').disabled = true;
+
+  const pos = state.currentPos;
+  const clubEras = Object.keys(PLAYERS[state.currentClub] || {});
+  const available = clubEras.filter(e => e !== state.currentEra);
+  const newEra = available.length > 0
+    ? available[Math.floor(Math.random()*available.length)]
+    : ERAS[Math.floor(Math.random()*ERAS.length)];
+  state.currentEra = newEra;
+
+  spinAnimation('reel-era', newEra, 0, () => {
+    const players = getPlayersForDraw(state.currentClub, newEra, pos);
+    showPickSection(players, pos);
+  });
+}
+
+function pickPlayer(player) {
+  const pos = state.currentPos;
+  const availableSlots = getAvailableSlots(pos);
+
+  // Auto-pick next available slot for this position
+  const slotId = availableSlots[0];
+  if (!slotId) return;
+
+  player.era = state.currentEra;
+  player.club = state.currentClub;
+  player.slotId = slotId;
+
+  state.filledSlots[slotId] = true;
+  state.roster[slotId] = player;
+  fillSlot(slotId, player);
+
+  // Remove active-slot from all
+  document.querySelectorAll('.active-slot').forEach(el => el.classList.remove('active-slot'));
+
+  state.round++;
+  state.spunThisRound = false;
+
+  document.getElementById('pick-section').classList.add('hidden');
+  document.getElementById('skip-club-btn').disabled = true;
+  document.getElementById('skip-era-btn').disabled = true;
+
+  if (state.round >= 5) {
+    // Simulate!
+    setTimeout(simulateResult, 500);
+    return;
+  }
+
+  updateDots();
+  document.getElementById('round-label').textContent = `Round ${state.round+1} of 5`;
+  document.getElementById('btn-spin').disabled = false;
+  setReelValue('reel-club-val', '?????');
+  setReelValue('reel-era-val', '????s');
+  setReelValue('reel-pos-val', '??');
+}
+
+// ─── SIMULATION ──────────────────────────────────────────────────────────────
+
+function simulateResult() {
+  const players = Object.values(state.roster);
+
+  // ERA ADJUSTERS (normalize scoring eras)
+  const eraFactors = {
+    '1960s': 1.18, '1970s': 1.12, '1980s': 1.08, '1990s': 1.04,
+    '2000s': 1.00, '2010s': 0.97, '2020s': 0.95
+  };
+
+  let totalScore = 0;
+  players.forEach(p => {
+    const ef = eraFactors[p.era] || 1.0;
+    const adjustedRating = p.rating * ef;
+    const goalContrib = Math.log1p(p.goals) * 1.5;
+    const assistContrib = Math.log1p(p.assists) * 1.2;
+    totalScore += adjustedRating + goalContrib + assistContrib;
+  });
+
+  const avgScore = totalScore / players.length;
+
+  // Map avg to wins (roughly 85 = 20W, 95+ = 38W)
+  const rawWins = Math.min(38, Math.max(8, Math.round((avgScore - 80) * 3.2)));
+  const draws = Math.floor(Math.random() * Math.min(5, 38 - rawWins));
+  const losses = 38 - rawWins - draws;
+  const wins = rawWins;
+
+  const verdicts = [
+    [38, "Absolute perfection. They'll sing songs about this squad for centuries."],
+    [35, "A historic unbeaten title campaign. Football's elite."],
+    [30, "A title-winning side. Champions by a mile."],
+    [25, "Solid contenders. A top-four squad on their day."],
+    [20, "Mid-table respectability. Some magic, some frustration."],
+    [0,  "A team of legends who just couldn't click. Back to the drawing board."],
+  ];
+  const verdict = verdicts.find(([min]) => wins >= min)[1];
+
+  showResult(wins, draws, losses, verdict, players);
+}
+
+function showResult(w, d, l, verdict, players) {
+  document.getElementById('game-section').classList.add('hidden');
+
+  const screen = document.getElementById('result-screen');
+  screen.classList.add('show');
+
+  const rec = document.getElementById('result-record');
+  rec.textContent = `${w}W-${d}D-${l}L`;
+  rec.className = 'result-record' + (w < 20 ? ' bad' : '');
+
+  document.getElementById('result-verdict').textContent = verdict;
+
+  // Breakdown
+  const breakdown = document.getElementById('result-breakdown');
+  breakdown.innerHTML = '';
+  const slots = ['slot-GK','slot-RB','slot-CB1','slot-CB2','slot-LB','slot-CM1','slot-CM2','slot-CM3','slot-LW','slot-ST','slot-RW'];
+  slots.forEach(id => {
+    const p = state.roster[id];
+    if (!p) return;
+    const pos = id.replace(/\d/g,'').replace('slot-','');
+    const div = document.createElement('div');
+    div.className = 'breakdown-card';
+    div.innerHTML = `
+      <div class="breakdown-pos">${pos}</div>
+      <div class="breakdown-name">${p.name}</div>
+      <div class="breakdown-rating">${p.rating}</div>
+      <div style="font-size:9px;opacity:0.4">${p.club} · ${p.era}</div>
+    `;
+    breakdown.appendChild(div);
+  });
+}
+
+function restartGame() {
+  state = {
+    round: 0, clubSkipsLeft: 1, eraSkipsLeft: 1,
+    currentClub: null, currentEra: null, currentPos: null,
+    spunThisRound: false, roster: {}, filledSlots: {},
+  };
+
+  // Reset UI
+  document.getElementById('result-screen').classList.remove('show');
+  document.getElementById('game-section').classList.remove('hidden');
+  document.getElementById('pick-section').classList.add('hidden');
+  document.getElementById('btn-spin').disabled = false;
+  document.getElementById('skip-club-btn').disabled = true;
+  document.getElementById('skip-era-btn').disabled = true;
+  document.getElementById('club-skip-count').textContent = '(1 left)';
+  document.getElementById('era-skip-count').textContent = '(1 left)';
+  setReelValue('reel-club-val', '?????');
+  setReelValue('reel-era-val', '????s');
+  setReelValue('reel-pos-val', '??');
+  document.getElementById('round-label').textContent = 'Round 1 of 5';
+
+  // Reset slots
+  const slotDefs = [
+    ['slot-GK','GK'],['slot-RB','RB'],['slot-CB1','CB'],['slot-CB2','CB'],
+    ['slot-LB','LB'],['slot-CM1','CM'],['slot-CM2','CM'],['slot-CM3','CM'],
+    ['slot-LW','LW'],['slot-ST','ST'],['slot-RW','RW'],
+  ];
+  slotDefs.forEach(([id, pos]) => {
+    const el = document.getElementById(id);
+    el.className = 'player-slot';
+    el.dataset.pos = pos;
+    el.innerHTML = `<div class="slot-pos">${pos}</div><div class="slot-empty-icon">⬡</div>`;
+  });
+
+  updateDots();
+}
+
+// Init
+updateDots();
+</script>
+</body>
+</html>
